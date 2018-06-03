@@ -2,7 +2,7 @@
 
 import sys, os
 
-for filename_in in sys.argv[1:]
+for filename_in in sys.argv[1:]:
 
     (root, ext) = os.path.splitext(filename_in)
 
