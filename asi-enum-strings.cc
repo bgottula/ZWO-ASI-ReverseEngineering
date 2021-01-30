@@ -72,11 +72,12 @@ const char * toString(const ASI_ERROR_CODE errorcode)
         case ASI_ERROR_INVALID_IMGTYPE      : return "ASI_ERROR_INVALID_IMGTYPE";
         case ASI_ERROR_OUTOF_BOUNDARY       : return "ASI_ERROR_OUTOF_BOUNDARY";
         case ASI_ERROR_TIMEOUT              : return "ASI_ERROR_TIMEOUT";
-        case ASI_ERROR_INVALID_SENQUENCE    : return "ASI_ERROR_INVALID_SENQUENCE";
+        case ASI_ERROR_INVALID_SEQUENCE     : return "ASI_ERROR_INVALID_SEQUENCE";
         case ASI_ERROR_BUFFER_TOO_SMALL     : return "ASI_ERROR_BUFFER_TOO_SMALL";
         case ASI_ERROR_VIDEO_MODE_ACTIVE    : return "ASI_ERROR_VIDEO_MODE_ACTIVE";
         case ASI_ERROR_EXPOSURE_IN_PROGRESS : return "ASI_ERROR_EXPOSURE_IN_PROGRESS";
         case ASI_ERROR_GENERAL_ERROR        : return "ASI_ERROR_GENERAL_ERROR";
+        case ASI_ERROR_INVALID_MODE         : return "ASI_ERROR_INVALID_MODE";
         case ASI_ERROR_END                  : return "ASI_ERROR_END";
     }
     return "unknown";
@@ -114,6 +115,10 @@ const char * toString(const ASI_CONTROL_TYPE controlType)
         case ASI_COOLER_POWER_PERC   : return "ASI_COOLER_POWER_PERC";
         case ASI_TARGET_TEMP         : return "ASI_TARGET_TEMP";
         case ASI_COOLER_ON           : return "ASI_COOLER_ON";
+        case ASI_MONO_BIN            : return "ASI_MONO_BIN";
+        case ASI_FAN_ON              : return "ASI_FAN_ON";
+        case ASI_PATTERN_ADJUST      : return "ASI_PATTERN_ADJUST";
+        case ASI_ANTI_DEW_HEATER     : return "ASI_ANTI_DEW_HEATER";
     }
     return "unknown";
 }

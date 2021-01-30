@@ -31,8 +31,8 @@ static void check_errorcode(ASI_ERROR_CODE errorcode)
 {
     if (errorcode != ASI_SUCCESS)
     {
-        const string message = string("check_errorcode failed; errorcode = ") + to_string(errorcode) + " (" + toString(errorcode) + ")";
-        throw runtime_error(message);
+        cerr << "check_errorcode failed; errorcode = " + to_string(errorcode) + " (" + toString(errorcode) + ")" << endl;
+        //throw runtime_error(message);
     }
 }
 
@@ -85,9 +85,11 @@ static void show_AsiCameraInfo(const ASI_CAMERA_INFO & cameraInfo)
     cout << "    IsCoolerCam ............... : " << cameraInfo.IsCoolerCam       << " (" << toString(cameraInfo.IsCoolerCam)       << ")" << endl;
     cout << "    IsUSB3Host ................ : " << cameraInfo.IsUSB3Host        << " (" << toString(cameraInfo.IsUSB3Host)        << ")" << endl;
     cout << "    IsUSB3Camera .............. : " << cameraInfo.IsUSB3Camera      << " (" << toString(cameraInfo.IsUSB3Camera)      << ")" << endl;
+    cout << "    ElecPerADU ................ : " << cameraInfo.ElecPerADU        << endl;
+    cout << "    BitDepth .................. : " << cameraInfo.BitDepth          << endl;
 
     cout << "    Unused .................... : {";
-    for (int i = 0; i < 28; ++i)
+    for (int i = 0; i < 20; ++i)
     {
         if (i != 0)
         {
@@ -555,6 +557,10 @@ int main()
             errorcode = ASIOpenCamera(info.CameraID);
             check_errorcode(errorcode);
             cout << "open done." << endl;
+            cout << "initializing camera ..." << endl;
+            errorcode = ASIInitCamera(info.CameraID);
+            check_errorcode(errorcode);
+            cout << "initialization done." << endl;
 
             if (false)
             {
@@ -581,6 +587,79 @@ int main()
             // test_StartPosAndROI(info.CameraID, 1000000);
 
             //test_GetCameraImages(info.CameraID, 100, true);
+
+            // lets set all of the controls to some known values so that everything that follows
+            // can be interpreted in a known context. Every control will be set to non-auto mode.
+            errorcode = ASISetROIFormat(info.CameraID, 3096, 2080, 1, ASI_IMG_RAW8);
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_GAIN, 0, ASI_FALSE);
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_EXPOSURE, 1000, ASI_FALSE); // 1 ms
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_WB_R, 70, ASI_FALSE);
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_WB_B, 90, ASI_FALSE);
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_BRIGHTNESS, 10, ASI_FALSE);
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_BANDWIDTHOVERLOAD, 50, ASI_FALSE);
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_FLIP, 0, ASI_FALSE);
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_AUTO_MAX_GAIN, 255, ASI_FALSE);
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_AUTO_MAX_EXP, 100, ASI_FALSE);
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_AUTO_MAX_BRIGHTNESS, 100, ASI_FALSE);
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_HARDWARE_BIN, 0, ASI_FALSE);
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_HIGH_SPEED_MODE, 0, ASI_FALSE);
+            check_errorcode(errorcode);
+            errorcode = ASISetControlValue(info.CameraID, ASI_MONO_BIN, 0, ASI_FALSE);
+            check_errorcode(errorcode);
+
+            printf("\n\n\n\n\n");
+
+            // printf("Disabling high speed mode\n");
+            // ASISetControlValue(info.CameraID, ASI_HIGH_SPEED_MODE, 0, ASI_FALSE);
+            // printf("Done.\n\n\n\n\n\n\n\n");
+            // printf("Enabling high speed mode\n");
+            // ASISetControlValue(info.CameraID, ASI_HIGH_SPEED_MODE, 1, ASI_FALSE);
+            // printf("Done.\n\n\n\n\n\n");
+
+            // for (int i = 40; i <= 100; i+=10)
+            // {
+            //     printf("\n\n\n\nSetting ASI_BANDWIDTHOVERLOAD to %d\n", i);
+            //     ASISetControlValue(info.CameraID, ASI_BANDWIDTHOVERLOAD, i, ASI_FALSE);
+            // }
+
+
+            // test_GetCameraImages(info.CameraID, 10000, false);
+
+            printf("Starting video capture\n");
+            errorcode = ASIStartVideoCapture(info.CameraID);
+            check_errorcode(errorcode);
+            printf("Done.\n\n\n\n");
+
+            // int image_size = 3096 * 2080;
+            // unsigned char *data = (unsigned char *)malloc(image_size);
+            // for (;;)
+            // {
+            //     printf("Trying to get frame %d\n", i);
+            //     errorcode = ASIGetVideoData(info.CameraID, data, image_size, 200);
+            //     check_errorcode(errorcode);
+            // }
+
+            usleep(500000);
+
+            // printf("Stopping video capture\n");
+            // errorcode = ASIStopVideoCapture(info.CameraID);
+            // check_errorcode(errorcode);
+            // printf("Done.\n");
+
+            // normally this would be called in a loop. I just want to see what happens if I don't.
+            // ASIGetVideoData(CamInfo.CameraID, (unsigned char*)pRgb->imageData, pRgb->imageSize, exp_ms<=100?200:exp_ms*2)
 
             cout << "closing camera ..." << endl;
             errorcode = ASICloseCamera(info.CameraID);

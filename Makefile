@@ -9,7 +9,7 @@ default : asi-test-ORIG asi-test asi-test-RE asi-test-c-compatibility
 asi-test-ORIG : asi-test.o asi-enum-strings.o
 	$(CXX) $^ libASICamera2.a -lusb-1.0 -lpthread -o $@
 
-asi-test : asi-test.o libUSB.o asi-enum-strings.o
+asi-test : asi-test.o libUSB.o asi-enum-strings.o libASICamera2_patched.a
 	$(CXX) $^ -lusb-1.0 libASICamera2_patched.a -lpthread -o $@
 
 asi-test-RE : asi-test.o libUSB.o libASICamera2_ReverseEngineered.o asi-enum-strings.o
@@ -29,6 +29,7 @@ libUSB.o : libUSB.c
 libASICamera2_ReverseEngineered.o : libASICamera2_ReverseEngineered.c
 
 libASICamera2_patched.a : libASICamera2.a
+	python3 patch-library.py libASICamera2.a
 
 clean :
 	$(RM) asi-test-ORIG asi-test-RE asi-test asi-test-c-compatibility
